@@ -1,6 +1,6 @@
 public class LinkedList<T extends Comparable<T>>
 {
-    private ListItem<T> head;
+    private ListItem<T> head, currentItem;
 
     /*
      * This method add a new element on the linkedlist.
@@ -11,39 +11,54 @@ public class LinkedList<T extends Comparable<T>>
             head = new Item(data);
         }
         else {
-            insert(head, data);
+            compare(head, data);
         }
     }
 
     /*
      * This methode compare the current item value and value to add.
-     * If the item value is lower than parameter value we add the new data to next case else we rotate elements.
+     * If the item value is lower than parameter value we write the new data to next case else we write element before.
      */
-    private void insert(ListItem<T> item, T data){
+    private void compare(ListItem<T> item, T data){
+        currentItem = item;
         int compare = item.compareTo(data);
         if(compare < 0){
             if(item.getNext() != null) {
-                insert(item.getNext(), data);
+                compare(item.getNext(), data);
             }
             else{
-                Item newItem = new Item(data);
-                newItem.setPrevious(item);
-                item.setNext(newItem);
+                writeAfter(data);
             }
         }
         if(compare > 0){
-            Item newItem = new Item(data);
-            newItem.setNext(item);
-
-            if(item.getPrevious() != null){
-                newItem.setPrevious(item.getPrevious());
-                item.getPrevious().setNext(newItem);
-            }
-            else{
-                head = newItem;
-                item.setPrevious(newItem);
-            }
+            writeBefore(data);
         }
+    }
+
+    /*
+     * This methode write new item with data value before the current item
+     */
+    public void writeBefore(T data){
+        Item newItem = new Item(data);
+        newItem.setNext(currentItem);
+
+        if(currentItem.getPrevious() != null){
+            newItem.setPrevious(currentItem.getPrevious());
+            currentItem.getPrevious().setNext(newItem);
+        }
+        else{
+            head = newItem;
+            currentItem.setPrevious(newItem);
+        }
+    }
+
+    /*
+     * This methode write new item with data value after the current item
+     */
+    public void writeAfter(T data){
+        Item newItem = new Item(data);
+        newItem.setPrevious(currentItem);
+        currentItem.setNext(newItem);
     }
 
     /*
